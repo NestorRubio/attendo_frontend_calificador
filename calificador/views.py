@@ -2,7 +2,6 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
-import plotly.graph_objs as go
 import json
 import requests
 import json

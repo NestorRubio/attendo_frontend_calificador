@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/02ea63a9-dd3c-4737-89f1-955d3193ea01/resourceGroups/dd-app-dev-eastus-001/providers/Microsoft.Web/sites/attendocalificador-frontend",
+    "appService.deploySubpath": "."
+}
