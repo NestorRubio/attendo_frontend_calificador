@@ -1,0 +1,316 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+{% block title %}Sparkline Chart{% endblock title %}
+
+{% block content %}
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div class="main-content">
+  <div class="page-content">
+
+    <div id="graph1" style="height: 80vh; width: 90vw;"></div>
+    <div class="mt-4" style="text-align: center; padding-bottom: 20px;">
+      <form method="POST">
+        {% if show_button %}
+        <button type="button" id="alternativas" class="btn btn-primary btn-lg w-md" style="font-size: 20px;">Creditos
+          alternos</button>
+        {% endif %}
+        {% csrf_token %}
+      </form>
+    </div>
+    {% if show_div %}
+    <div class="card">
+      <div class="card-header">
+        <h4 class="card-title">Opciones Alternas Aprobatorias</h4>
+      </div>
+      <div class="card-body p-4">
+        <table>
+          <thead style="background-color: whitesmoke;">
+            <tr>
+              <td style="padding: 5px;"><strong>Plazo en meses</strong></td>
+              {% for key, values in alts.items %}
+              {% if forloop.first %}
+              {% for inner_key in values.keys %}
+              <td style="padding: 5px;"><strong>{{ inner_key }}</strong></td>
+              {% endfor %}
+              {% endif %}
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for key, value in alts.items %}
+            <tr>
+              <td>{{ key }}</td>
+              {% for inner_key, inner_value in value.items %}
+              <td>{{ inner_value }}</td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  <div id="loading-spinner" style="display: none;">
+    <img src="{% static 'principal/images/loading-spinner.gif'%}" alt="Loading..." ,
+      style="display: block; margin-left: auto; margin-right: auto;margin-top: 10%;margin-bottom: auto;">
+  </div>
+</div>
+{% block footer %}
+{% include 'partials/footer.html' %}
+{% endblock footer %}
+</div>
+<!-- end main content-->
+
+{% endblock content %}
+
+{% block extra_js %}
+
+<style>
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  td,
+  th {
+    text-align: center;
+  }
+</style>
+<style>
+  #loading-spinner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(255, 255, 255, 0.7);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #loading-spinner img {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+</style>
+
+<!-- echarts js -->
+<script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
+<script type="text/javascript">
+
+  const alternativas = document.getElementById("alternativas");
+  const spinner = document.querySelector('#loading-spinner');
+
+  function showSpinner() {
+    spinner.style.display = "block";
+  }
+
+  function hideSpinner() {
+    spinner.style.display = "none";
+  }
+  if(alternativas){ 
+    alternativas.addEventListener("click", async (event) => {
+
+      const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      showSpinner();
+      const response = await fetch('./', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': csrftoken }
+      }).then(response => {
+        if (response.status === 200) {
+          window.location.href = "{% url 'calificacion' %}"
+          hideSpinner();
+        } else {
+          throw new Error("Solicitud no llego al servidor 2")
+        }
+      });
+    }, {passive: true});
+  }
+
+  var dom = document.getElementById('graph1');
+  var datos = JSON.parse('{{ datos|escapejs }}');
+
+  var arrDatosAux = Object.entries(datos);
+  var last = arrDatosAux.pop();
+  var arrDatos = arrDatosAux.slice().sort((a,b) => b - a);
+  arrDatos.push(last);
+
+  var listaAporte = []
+  var listaDeduccion = []
+  var listaPrediccion = []
+  var offSet = [0];
+  var totalValue = 0;
+
+  for(let j = 1; j < arrDatos.length-1; j++){
+    if(arrDatos[j-1][1] >= 0 && arrDatos[j][1] < 0){
+      totalValue += arrDatos[j-1][1] + arrDatos[j][1]; 
+    }else if(arrDatos[j-1][1] >= 0 && arrDatos[j][1] >= 0){
+      totalValue += arrDatos[j-1][1];
+    }else if(arrDatos[j-1][1] < 0 && arrDatos[j][1] < 0){
+      totalValue += arrDatos[j][1];
+    }else if(arrDatos[j-1][1] < 0 && arrDatos[j][1] >= 0 ){
+      totalValue = totalValue;
+    }
+    offSet.push(totalValue);
+  }
+
+  for (let i = 0; i < arrDatos.length-1; i++) {
+    if(arrDatos[i][1] > 0){
+      if(totalValue < 0){
+        listaAporte.push(arrDatos[i][1]*-1);
+      }else{
+        listaAporte.push(arrDatos[i][1]);
+      }
+      listaDeduccion.push('-')
+      //totalValue += arrDatos[i][1]
+    }else{
+      if(totalValue > 0){
+        listaDeduccion.push(arrDatos[i][1]*-1);
+        //totalValue += arrDatos[i][1]
+      }else{
+        listaDeduccion.push(arrDatos[i][1]);
+        //totalValue += arrDatos[i][1]
+      }
+      listaAporte.push('-');
+    }
+    listaPrediccion.push('-');
+  }
+
+  listaPrediccion.push(arrDatos[arrDatos.length-1][1]);
+  offSet.push(0);
+  //console.log(arrDatos)
+  //console.log(offSet)
+  //console.log(listaAporte)
+  //console.log(listaDeduccion)
+
+
+  var myChart = echarts.init(dom, null, {
+    renderer: 'canvas',
+    useDirtyRect: false
+  });
+  var app = {};
+
+  var option;
+
+  option = {
+    title: {
+        text: 'Calificacion',
+        subtext: 'Desglose de aporte de caracteristicas'
+        },
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow'
+      },
+      formatter: function (params) {
+        let tar;
+        if (params[1] && params[1].value !== '-') {
+          tar = params[1];
+        } else {
+          tar = params[2];
+        }
+        return tar && tar.name + '<br/>' + tar.seriesName + ' : ' + tar.value;
+      }
+    },
+    legend: {
+      data: ['Deduccion', 'Aporte', 'Prediccion']
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      data: Object.keys(datos),
+      axisLabel:{
+          rotate: 90,
+          fontSize: 10,
+          interval: 0,
+          margin: 2,
+          padding: [5, 0, 0, 0],
+          position: 'top'
+        },
+        sort: false
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        name: 'Placeholder',
+        type: 'bar',
+        stack: 'Total',
+        silent: true,
+        itemStyle: {
+          borderColor: 'transparent',
+          color: 'transparent'
+        },
+        emphasis: {
+          itemStyle: {
+            borderColor: 'transparent',
+            color: 'transparent'
+          }
+        },
+        data: offSet
+      },
+      {
+        name: 'Aporte',
+        type: 'bar',
+        stack: 'Total',
+        label: {
+          show: true,
+          position: 'top'
+        },
+        data: listaAporte,
+        itemStyle:{
+          color: 'green'
+        }
+      },
+      {
+        name: 'Deduccion',
+        type: 'bar',
+        stack: 'Total',
+        label: {
+          show: true,
+          position: 'bottom'
+        },
+        data: listaDeduccion,
+        itemStyle: {
+          color: 'red'
+        }
+      },
+      {
+        name: 'Prediccion',
+        type: 'bar',
+        stack: 'Total',
+        label: {
+          show: true,
+          position: 'top'
+        },
+        data: listaPrediccion,
+        itemStyle:{
+          color: function(params){
+            return params.value <= 0.5 ? 'red' : 'green'  
+          } 
+        }
+      }
+    ]
+  };
+  
+  if (option && typeof option === 'object') {
+    myChart.setOption(option);
+  }
+
+  window.addEventListener('resize', myChart.resize);
+
+
+</script>
+{% endblock extra_js %}

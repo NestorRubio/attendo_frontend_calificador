@@ -1,0 +1,199 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+{% block title %}Sparkline Chart{% endblock title %}
+
+{% block content %}
+    <!-- ============================================================== -->
+    <!-- Start right Content here -->
+    <!-- ============================================================== -->
+    <div class="main-content">
+      <div class="page-content">
+        <div class="card">
+          <div class="card-body">
+            <div id="graph1" style="height: 80vh; width: 90vw;"></div>
+          </div>
+        </div>
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title">Opciones Alternas Aprobatorias</h4>
+            </div>
+            <div class="card-body p-4">
+              <table>
+                <thead style="background-color: whitesmoke;">
+                  <tr>
+                    <td style="padding: 5px;"><strong>Plazo en meses</strong></td>
+                    {% for key, values in alts.items %}
+                      {% if forloop.first %}
+                        {% for inner_key in values.keys %}
+                          <td style="padding: 5px;"><strong>{{ inner_key }}</strong></td>
+                        {% endfor %}
+                      {% endif %}
+                    {% endfor %}
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for key, value in alts.items %}
+                  <tr>
+                    <td>{{ key }}</td>
+                    {% for inner_key, inner_value in value.items %}
+                      <td>{{ inner_value }}</td>
+                    {% endfor %}
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% block footer %}
+        {% include 'partials/footer.html' %}
+      {% endblock footer %}
+    </div>
+    <!-- end main content-->
+
+{% endblock content %}
+
+{% block extra_js %}
+
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    td, th{
+      text-align: center;
+    }
+  </style>
+
+
+  <!-- echarts js -->
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
+  <script type="text/javascript">
+
+    const alternativas = document.getElementById("alternativas");
+
+    var dom = document.getElementById('graph1');
+    var datos = JSON.parse('{{ datos|escapejs }}');
+
+    var arrDatos = Object.entries(datos);
+    console.log(arrDatos)
+    /*
+    arrDatos.sort(function(a, b){
+      if(a[0] === "Prediccion") return 1;
+      if(b[0] === "Prediccion") return -1;
+      return b[1] - a[1];
+    });
+    */
+    /*
+    var prediccion = arrDatos.find(d => d[0] !== 'Prediccion');
+    arrDatos = arrDatos.filter(d => d[0] !== 'Prediccion');
+    arrDatos.sort((a, b) => b[1] - a[1]);
+    arrDatos.push(prediccion)
+    */
+
+    var offSet = [0];
+    var totalValue = 0;
+    for(let i = 0; i < arrDatos.length-2; i++){
+      totalValue += arrDatos[i][1]
+      offSet.push(totalValue);
+    }
+    offSet.push(0);
+    console.log(arrDatos)
+    console.log(offSet)
+
+    
+    var myChart = echarts.init(dom, null, {
+      renderer: 'canvas',
+      useDirtyRect: false
+    });
+    var app = {};
+    
+    var option;
+
+    option = {
+      title: {
+      text: 'Calificacion',
+      subtext: 'Desglose de aporte de caracteristicas'
+      },
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow'
+        },
+        formatter: function (params) {
+        var tar = params[1];
+        return tar.name + '<br/>' + tar.seriesName + ' : ' + tar.value;
+        }
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'category',
+        splitLine: { show: false },
+        data: Object.keys(datos),     //Etiqutetas de pesos
+        axisLabel:{
+          rotate: 90,
+          fontSize: 10,
+          interval: 0,
+          margin: 2,
+          padding: [5, 0, 0, 0],
+          position: 'top'
+        }
+      },
+      yAxis: {
+      type: 'value'
+      },
+      series: [
+      {
+        name: 'Placeholder',
+        type: 'bar',
+        stack: 'Total',
+        itemStyle: {
+          borderColor: 'transparent',
+          color: 'transparent'
+        },
+        emphasis: {
+          itemStyle: {
+            borderColor: 'transparent',
+            color: 'transparent'
+          }
+        },
+        data: offSet
+      },
+      {
+        name: 'Peso',
+        type: 'bar',
+        stack: 'Total',
+        label: {
+          show: true,
+          position: 'inside'
+        },
+        itemStyle: {
+          color: function(params){
+            if(params.value == arrDatos[arrDatos.length-1][1]){
+              return params.value < 0.5 ? 'red' : 'green';
+            }else{
+              return params.value < 0 ? 'red' : 'green';
+            }
+          }
+        },
+        data: Object.values(datos)
+      }
+      ] 
+    };
+    
+
+    if (option && typeof option === 'object') {
+      myChart.setOption(option);
+    }
+
+    window.addEventListener('resize', myChart.resize);
+
+
+  </script>
+{% endblock extra_js %}

@@ -1,0 +1,276 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block title %} Captura de datos para evaluacion de credito{% endblock title%}
+
+{% block content %}
+    <!-- ============================================================== -->
+    <!-- Start right Content here -->
+    <!-- ============================================================== -->
+    <div class="main-content">
+
+        <div class="page-content">
+            <div class="container-fluid">
+                <!-- start page title-->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                            <h4 class="mb-sm-0 font-size-18">Evaluacion de credito</h4>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- end page title-->
+                <form id="solicitud" method="POST">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Informacion sobre el credito</h4>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div>
+                                                <div class="mb-3">
+                                                    <label for="monto-de-credito" class="form-label">Monto del credito</label>
+                                                    <input class="form-control" type="number" placeholder="$" id="monto-de-credito">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="tasa-anual" class="form-label">Tasa anual %</label>
+                                                    <input class="form-control" type="number" placeholder="10" id="tasa-anual">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="monto-pago" class="form-label">Monto de pago</label>
+                                                    <input class="form-control" type="number" placeholder="10" id="monto-pago">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Periodicidad</label>
+                                                    <select class="form-select" id="esquema-pagos">
+                                                        <option value="1">Mensual</option>
+                                                        <option value="2">Quincenal</option>
+                                                        <option value="3">Catorcenal</option>
+                                                        <option value="4">Semanal</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="numero-pagos" class="form-label">Numero de pagos</label>
+                                                    <input class="form-control" type="number" placeholder="12" id="numero-pagos">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="contratos-previos" class="form-label">Numero de contratos previos</label>
+                                                    <input class="form-control" type="number" placeholder="1" id="contratos-previos">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Informacion personal</h4>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div>
+                                                <div class="mb-3">
+                                                    <label for="edad" class="form-label">Edad</label>
+                                                    <input class="form-control" type="number" placeholder="45" id="edad">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Genero</label>
+                                                    <select class="form-select" id="selector-genero">
+                                                        <!-- <option value="">-- Selecciones una opcion --</option> -->
+                                                        <option value="">-- Seleccione una opcion --</option>
+                                                        {% for value in genero %}
+                                                            <option value="{{ value }}">{{ value }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Estado Civil</label>
+                                                    <select class="form-select" id="selector-estado-civil">
+                                                        <!-- <option value="">-- Selecciones una opcion --</option> -->
+                                                        <option value="">-- Seleccione una opcion --</option>
+                                                        {% for value in estado_civil %}
+                                                            <option value="{{ value }}">{{ value }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="estadoDataList" class="form-label">Estado (iniciales)</label>
+                                                    <input class="form-control" list="estadoDatalistOptions" id="estado-datalist"
+                                                        placeholder="Type to search...">
+                                                    <datalist id="estadoDatalistOptions">
+                                                        {% for value in estado %}
+                                                        <option value="{{ value }}">
+                                                        {% endfor %}
+                                                    </datalist>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div>
+                                                <div class="mb-3">
+                                                    <label for="empresaDataList" class="form-label">Empresa</label>
+                                                    <input class="form-control" list="empresaDatalistOptions" id="empresa-datalist"
+                                                        placeholder="Type to search...">
+                                                    <datalist id="empresaDatalistOptions">
+                                                        {% for value in empresa %}
+                                                        <option value="{{ value }}">
+                                                        {% endfor %}
+                                                    </datalist>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="ocupacionDataList" class="form-label">Ocupacion</label>
+                                                    <input class="form-control" list="ocupacionDatalistOptions" id="ocupacion-datalist"
+                                                        placeholder="Type to search...">
+                                                    <datalist id="ocupacionDatalistOptions">
+                                                        {% for value in ocupacion %}
+                                                        <option value="{{ value }}">
+                                                        {% endfor %}
+                                                    </datalist>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Antiguedad</label>
+                                                    <select class="form-select" id="selector-antiguedad">
+                                                        <!-- <option value="">-- Selecciones una opcion --</option> -->
+                                                        <option value="">-- Seleccione una opcion --</option>
+                                                        {% for value in antiguedad %}
+                                                            <option value="{{ value }}">{{ value }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="ingreso-mensual" class="form-label">Ingreso mensual</label>
+                                                    <input class="form-control" type="number" placeholder="0" id="ingreso-mensual">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4" style="text-align: center; padding-bottom: 20px;">
+                        <button type="submit" class="btn btn-primary btn-lg w-md" style="font-size: 20px;">Calificar</button>
+                    </div>
+                </form>                
+            </div>
+            <div id="loading-spinner" style="display: none;">
+                <img src="{% static 'principal/images/loading-spinner.gif'%}" alt="Loading...", style="display: block; margin-left: auto; margin-right: auto;margin-top: 10%;margin-bottom: auto;">
+            </div>
+        </div>
+        {% block footer %}
+            {% include 'partials/footer.html' %}
+        {% endblock footer %}
+    </div>
+{% endblock content %}
+
+{% block extra_js %}
+
+<style>
+    #loading-spinner {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background-color: rgba(255, 255, 255, 0.7);
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+  
+    #loading-spinner img {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+<script>
+    
+    const form = document.querySelector('#solicitud');
+    const spinner = document.querySelector('#loading-spinner');
+
+    function showSpinner(){
+        spinner.style.display = "block";
+    }
+    function hideSpinner(){
+        spinner.style.display = "none";
+    }
+    // Handle form submission
+    form.addEventListener('submit', async (event) => {
+        // Prevent the form from submitting normally
+        event.preventDefault();
+
+        const numero_de_pagos = document.getElementById("numero-pagos").value;
+        const edad = document.getElementById("edad").value;
+        const contratos_previos = document.getElementById("contratos-previos").value;
+        const antiguedad = document.getElementById("selector-antiguedad").value;
+        const ocupacion = document.getElementById("ocupacion-datalist").value;
+        const empresa = document.getElementById("empresa-datalist").value;
+        const estado = document.getElementById("estado-datalist").value;
+        const estado_civil = document.getElementById("selector-estado-civil").value;
+        const genero = document.getElementById("selector-genero").value;
+        const monto_pago = document.getElementById("monto-pago").value;
+
+        //Estos son para calculos de verificacion
+        const monto_credito = document.getElementById("monto-de-credito").value;
+        const ingreso_mensual = document.getElementById("ingreso-mensual").value;
+        const esquema_pagos = document.getElementById("esquema-pagos").value;
+        const tasa_anual = document.getElementById("tasa-anual").value;
+
+
+        // Get the form data
+        const formData = new FormData();
+        formData.append("numero-pagos", numero_de_pagos);
+        formData.append("monto-pago", monto_pago)
+        formData.append("edad", edad );
+        formData.append("contratos-previos", contratos_previos);
+        formData.append("selector-antiguedad", antiguedad);
+        formData.append("ocupacion-datalist", ocupacion);
+        formData.append("empresa-datalist", empresa);
+        formData.append("estado-datalist", estado);
+        formData.append("selector-estado-civil", estado_civil);
+        formData.append("selector-genero", genero);
+
+        //Estos son para calculos de verificacion
+        formData.append("monto-de-credito", monto_credito);
+        formData.append("ingreso-mensual", ingreso_mensual);
+        formData.append("esquema-pagos", esquema_pagos);
+        formData.append("tasa-anual", tasa_anual);
+        // Send the form data using fetch API
+
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        showSpinner();
+        const response = await fetch('./', {
+        method: 'POST',
+        headers: {'X-CSRFToken': csrftoken},
+        body: formData
+        }).then(response => {
+            if (response.status === 200) {
+                hideSpinner();
+                window.location.href = "{% url 'calificacion' %}"
+            }else{
+                throw new Error("Solicitud no llego al servidor")
+            }
+        });
+    });
+
+
+</script>
+
+{% endblock extra_js %}

@@ -1,0 +1,32 @@
+{% load static %}
+{% block left_sidebar %}
+        <!-- ========== Left Sidebar Start ========== -->
+        <div class="vertical-menu">
+
+            <div data-simplebar class="h-100">
+
+                <!--- Sidemenu -->
+                <div id="sidebar-menu">
+                    <!-- Left Menu Start -->
+                    <ul class="metismenu list-unstyled" id="side-menu">
+                        <li class="menu-title" data-key="t-seccion1">Bienvenida</li>
+                        <li>
+                            <a href="{% url 'index' %}">
+                                <i data-feather="home"></i> <!--Esto es para que salga la casita? -->
+                                <span data-key="t-seccion-algo">Inicio</span> <!--Este es el texto al lado de la casita? -->
+                            </a>
+                        </li>
+                        <li class="menu-title" data-key="t-seccion2">Aplicaciones</li>
+                        <li>
+                            <a href="{% url 'calificador' %}">
+                                <i data-feather="clipboard"></i>
+                                <span data-key="t-copciondirecta">Solicitud Credito</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- Sidebar -->
+            </div>
+        </div>
+        <!-- Left Sidebar End -->
+{% endblock left_sidebar %}
