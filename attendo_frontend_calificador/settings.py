@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-2=_f(dlj6i(e1th#x(uh*9njnkxvp0@^*k8!75q*7&irje@232
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['attendocalificador-frontend.azurewebsites.net']
+ALLOWED_HOSTS = ['https://attendocalificador-front.azurewebsites.net']
 
 
 # Application definition
