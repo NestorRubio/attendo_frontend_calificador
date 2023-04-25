@@ -17,7 +17,7 @@ def solicitud(request):
 
     if request.method == "POST":
 
-        url = "http://127.0.0.1:8080/API/"  # The URL of your Django REST API endpoint
+        url = "attendocalificador.azurewebsites.net"  # The URL of your Django REST API endpoint
         headers = {'content-type': 'application/json'}
         
         data = {
@@ -87,7 +87,7 @@ def calificacion(request):
 
     elif request.method == "POST":
 
-        url = "http://127.0.0.1:8080/API/"  # The URL of your Django REST API endpoint
+        url = "attendocalificador.azurewebsites.net"  # The URL of your Django REST API endpoint
         headers = {'content-type': 'application/json'}
         previous_response_data = request.session.get('response_data')
 
@@ -147,7 +147,7 @@ def alternativas(request):
 
 def calificador(request):
     if request.method == 'GET':
-        url = "http://127.0.0.1:8080/API/"
+        url = "attendocalificador.azurewebsites.net"
         response = requests.get(url)
 
         if response.status_code == 200:
