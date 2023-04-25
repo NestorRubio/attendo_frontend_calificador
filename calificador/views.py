@@ -2,12 +2,14 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
+from django.views.decorators.csrf import csrf_exempt
 import json
 import requests
 import json
 import urllib.parse
 
 # Create your views here.
+@csrf_exempt
 def solicitud(request):
 
     if request.method == "GET":
@@ -53,7 +55,7 @@ def solicitud(request):
         
         return redirect('calificacion')
         
-
+@csrf_exempt
 def calificacion(request):
     if request.method == "GET":
         context = {}
