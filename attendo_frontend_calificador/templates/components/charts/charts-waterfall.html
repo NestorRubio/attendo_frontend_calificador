@@ -12,11 +12,11 @@
     <div id="graph1" style="height: 80vh; width: 90vw;"></div>
     <div class="mt-4" style="text-align: center; padding-bottom: 20px;">
       <form method="POST">
+        {% csrf_token %}
         {% if show_button %}
         <button type="button" id="alternativas" class="btn btn-primary btn-lg w-md" style="font-size: 20px;">Creditos
           alternos</button>
         {% endif %}
-        {% csrf_token %}
       </form>
     </div>
     {% if show_div %}
