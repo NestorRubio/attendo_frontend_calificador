@@ -60,4 +60,4 @@ jobs:
         with:
           app-name: 'attendocalificador-front'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_9F5CD675129E4F0EA10170D2F748EA99 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B2D7273ADB654421BCF07EE80ABDDE97 }}
