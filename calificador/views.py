@@ -14,14 +14,13 @@ def solicitud(request):
 
     if request.method == "GET":
         context = request.session.get('posibles_valores')
-        request.session.pop('alts', None)
         return render(request, 'components/forms/form-captura_datos_credito.html', context)
 
     if request.method == "POST":
 
         url = "https://attendocalificador.azurewebsites.net/API/"  # The URL of your Django REST API endpoint
         headers = {'content-type': 'application/json'}
-        
+        request.session.pop('alts', None)
         data = {
             "command" : "calificacion-simple",
             "Monto de credito": float(request.POST.get("monto-de-credito")),
