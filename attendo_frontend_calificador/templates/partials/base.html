@@ -37,21 +37,18 @@
         {% endblock header %}
 
         {% block left_sidebar %}
-        {% include 'partials/left-sidebar.html' %}
+            {% include 'partials/left-sidebar.html' %}
         {% endblock left_sidebar %}
 
         {% block content %}
         <div class="main-content">
             <div class="page-content">
-                <h1 style="color: lightgray; padding-top: 20px; text-align: center; ">Demo Calificador</h1>
+                <h1 style="color: lightgray; padding-top: 30px; text-align: center; ">Demo Calificador</h1>
             </div>
         </div>
         {% block footer %}
+            {% include 'partials/footer.html' %}
         {% endblock footer %}
-        {% endblock content %}
-
-
-
     </div>
     <!-- END layout-wrapper -->
 
